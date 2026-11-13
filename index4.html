@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MOZEE MONTANA — Молодая легенда</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700;900&family=Caveat:wght@700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --garnet: #8B1E2D;
+    --lime: #B8FF3C;
+    --paper: #F0EDE6;
+    --dim: #6b6b6b;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--paper);
+    font-family: 'Unbounded', sans-serif;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* ===== КУРСОР: отсылка к татуировке 1915 ===== */
+  .cursor {
+    position: fixed;
+    top: 0; left: 0;
+    pointer-events: none;
+    z-index: 9999;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: .1em;
+    color: var(--paper);
+    transition: color .2s, font-size .2s, text-shadow .2s;
+    mix-blend-mode: difference;
+    user-select: none;
+    white-space: nowrap;
+    transform: translate(-50%, -50%);
+  }
+  .cursor::before { content: '1915'; }
+  .cursor.hover {
+    color: var(--lime);
+    font-size: 24px;
+    text-shadow: 0 0 12px var(--lime);
+  }
+  /* Курсор-закладка на армянских элементах */
+  .cursor.garnet {
+    color: var(--garnet);
+    text-shadow: 0 0 10px var(--garnet);
+  }
+
+  /* ===== Зерно ===== */
+  .grain {
+    position: fixed; inset: 0;
+    pointer-events: none; z-index: 9998; opacity: .06;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* ===== HERO ===== */
+  .hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+    justify-content: center; align-items: center;
+    position: relative; padding: 40px 20px;
+    overflow: hidden;
+  }
+  .hero .tattoo {
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 46vw; font-weight: 900;
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(240, 237, 230, 0.05);
+    letter-spacing: -0.05em; user-select: none; z-index: 0;
+    will-change: transform;
+  }
+  
+  .hero .name-container {
+    position: relative; z-index: 2;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    width: 100%; max-width: 1100px; margin: 0 auto;
+  }
+
+  .hero .name-line {
+    display: flex; justify-content: center;
+    gap: 0 .05em; line-height: .85;
+    letter-spacing: -0.04em; width: 100%;
+  }
+
+  .hero .name-line span {
+    display: inline-block; opacity: 0;
+    transform: translateY(40px);
+    animation: letterIn .8s cubic-bezier(.2,.8,.3,1) forwards;
+    animation-delay: var(--d, 0s);
+    font-size: clamp(30px, 9vw, 140px); 
+  }
+
+  @keyframes letterIn { to { opacity: 1; transform: translateY(0); } }
+  
+  .hero .name-line .col-white { color: var(--paper); }
+  .hero .name-line .col-lime { color: var(--lime); }
+  .hero .name-line .col-garnet { color: var(--garnet); }
+
+  .hero .tagline {
+    position: relative; z-index: 2; margin-top: 32px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; letter-spacing: .3em;
+    text-transform: uppercase; color: var(--dim); text-align: center;
+    line-height: 1.8;
+  }
+  .hero .tagline span { color: var(--paper); }
+
+  .hero .things {
+    position: absolute; bottom: 32px; right: 32px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px; color: var(--lime);
+    letter-spacing: .2em; z-index: 3;
+    cursor: none; user-select: none;
+  }
+  .hero .things::after { content: '_'; animation: blink 1s steps(2) infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  .hero .btn-listen {
+    position: relative; z-index: 2; margin-top: 48px;
+    display: inline-block; padding: 18px 48px;
+    background: var(--lime); color: #000;
+    font-family: 'Unbounded', sans-serif; font-weight: 700;
+    font-size: 14px; letter-spacing: .25em; text-transform: uppercase;
+    text-decoration: none; border: none; cursor: none;
+    transition: transform .2s, box-shadow .2s;
+  }
+  .hero .btn-listen:hover {
+    transform: translate(-4px, -4px);
+    box-shadow: 6px 6px 0 var(--garnet);
+  }
+
+  /* ===== Секции ===== */
+  section {
+    padding: 120px 40px;
+    max-width: 1200px; margin: 0 auto; position: relative;
+  }
+  .section-title {
+    font-size: clamp(32px, 6vw, 72px);
+    font-weight: 900; letter-spacing: -0.03em;
+    margin-bottom: 64px; line-height: .9;
+  }
+  .section-title .num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px; color: var(--lime);
+    display: block; margin-bottom: 12px;
+    letter-spacing: .3em; font-weight: 400;
+  }
+
+  /* ===== БИО ===== */
+  .bio-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 24px;
+  }
+  .bio-card {
+    background: #141414; border: 1px solid #222;
+    padding: 32px 28px; transform: rotate(var(--rot, -1deg));
+    transition: transform .4s cubic-bezier(.2,.8,.3,1), border-color .3s;
+  }
+  .bio-card:nth-child(2n) { --rot: 1.5deg; }
+  .bio-card:nth-child(3n) { --rot: -2deg; }
+  .bio-card:hover { transform: rotate(0deg) scale(1.02); border-color: var(--lime); }
+  .bio-card .k {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; color: var(--garnet);
+    letter-spacing: .2em; margin-bottom: 16px; display: block;
+  }
+  .bio-card p { font-size: 15px; line-height: 1.6; font-weight: 400; }
+  .bio-card p b { color: var(--lime); font-weight: 700; }
+  .bio-card .stamp-mini {
+    display: inline-block;
+    border: 2px solid var(--garnet);
+    color: var(--garnet);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    padding: 2px 8px;
+    margin-top: 12px;
+    transform: rotate(-3deg);
+  }
+
+  /* ===== ДИСКОГРАФИЯ ===== */
+  .disco-scroll {
+    display: flex; gap: 24px; overflow-x: auto;
+    padding: 20px 0 40px;
+    scrollbar-width: thin; scrollbar-color: var(--garnet) transparent;
+    scroll-snap-type: x mandatory;
+  }
+  .disco-scroll::-webkit-scrollbar { height: 6px; }
+  .disco-scroll::-webkit-scrollbar-thumb { background: var(--garnet); }
+
+  .release {
+    flex: 0 0 260px; scroll-snap-align: start;
+    cursor: none; transition: transform .3s;
+  }
+  .release:hover { transform: translateY(-8px); }
+
+  .release .cover {
+    aspect-ratio: 1; background: #141414;
+    border: 1px solid #222;
+    position: relative; overflow: hidden;
+    transition: border-color .3s;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .release:hover .cover { border-color: var(--lime); }
+  .release .cover img {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%; object-fit: cover;
+    z-index: 1; filter: grayscale(.2);
+    transition: filter .3s, transform .5s;
+  }
+  .release:hover .cover img {
+    filter: grayscale(0);
+    transform: scale(1.05);
+  }
+  .release .cover .cover-fallback {
+    font-size: 40px; font-weight: 900; color: var(--dim); z-index: 0;
+  }
+  .release .cover img.broken { display: none; }
+
+  .release .meta {
+    margin-top: 14px; display: flex;
+    justify-content: space-between; align-items: baseline;
+  }
+  .release .meta .title { font-size: 14px; font-weight: 700; }
+  .release .meta .year {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px; color: var(--dim);
+  }
+
+  /* ===== НОВЫЙ БЛОК: АРХИВ (Отсылки) ===== */
+  .archive-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+  }
+  .archive-item {
+    background: #141414;
+    border: 1px solid #222;
+    padding: 32px 28px;
+    position: relative;
+    overflow: hidden;
+    cursor: none;
+    transition: border-color .3s;
+  }
+  .archive-item:hover { border-color: var(--garnet); }
+  .archive-item .icon {
+    font-size: 32px;
+    margin-bottom: 16px;
+    display: block;
+    filter: grayscale(1);
+    transition: filter .3s;
+  }
+  .archive-item:hover .icon { filter: grayscale(0); }
+  .archive-item h4 {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .archive-item .hidden-quote {
+    font-family: 'Caveat', cursive;
+    font-size: 20px;
+    color: var(--lime);
+    line-height: 1.3;
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: max-height .4s ease, opacity .4s ease, margin .4s;
+  }
+  .archive-item:hover .hidden-quote {
+    max-height: 120px;
+    opacity: 1;
+    margin-top: 12px;
+  }
+  .archive-item .source {
+    display: block;
+    margin-top: 16px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--dim);
+    letter-spacing: .1em;
+  }
+
+  /* ===== АРТЕФАКТЫ (Баттлы) ===== */
+  .artifact {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 40px; align-items: center;
+    margin-bottom: 80px; padding-bottom: 80px;
+    border-bottom: 1px solid #1a1a1a;
+  }
+  .artifact:last-child { border-bottom: none; }
+  .artifact:nth-child(even) { direction: rtl; }
+  .artifact:nth-child(even) > * { direction: ltr; }
+
+  .artifact .visual {
+    aspect-ratio: 4/3; background: #141414;
+    border: 1px solid #222;
+    display: flex; align-items: center; justify-content: center;
+    position: relative; overflow: hidden;
+  }
+  .artifact .text h3 {
+    font-size: clamp(24px, 4vw, 40px);
+    font-weight: 900; margin-bottom: 20px; line-height: 1;
+  }
+  .artifact .text .quote {
+    font-family: 'Caveat', cursive;
+    font-size: 24px; color: var(--lime);
+    margin-bottom: 20px; line-height: 1.3;
+  }
+  .artifact .text p {
+    font-size: 15px; line-height: 1.7; color: #b8b8b8;
+  }
+  .artifact .text .citation {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--dim);
+    margin-top: 12px;
+    display: block;
+  }
+
+  /* Мирроу (Беллуччи) */
+  .mirror {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 6px; width: 80%; height: 80%;
+  }
+  .shard {
+    background: #1c1c1c; border: 1px solid #2a2a2a;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px; font-weight: 900; color: var(--dim);
+    transition: all .3s;
+  }
+  .shard:hover { background: var(--garnet); color: var(--paper); transform: scale(1.05); }
+
+  /* ВЕЩИ + Анимация взрыва */
+  .things-cloud {
+    display: flex; flex-wrap: wrap; gap: 12px;
+    justify-content: center; width: 90%; height: 90%;
+    align-content: center;
+    position: relative;
+  }
+  .thing {
+    font-weight: 900; cursor: none;
+    transition: transform .2s, color .2s;
+    user-select: none;
+  }
+  .thing:hover { transform: scale(1.3) rotate(-3deg); color: var(--lime); }
+  .thing:active { transform: scale(0); opacity: 0; }
+  
+  /* Анимация для "Взрыва" */
+  @keyframes explode {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); filter: brightness(2); }
+    100% { transform: scale(1); filter: brightness(1); }
+  }
+  .visual.explode {
+    animation: explode 0.4s ease-out;
+  }
+
+  /* ===== ТАЙМЛАЙН ===== */
+  .timeline { position: relative; padding-left: 32px; }
+  .timeline::before {
+    content: ''; position: absolute;
+    left: 8px; top: 0; bottom: 0; width: 2px;
+    background: linear-gradient(180deg, var(--garnet), var(--lime), transparent);
+  }
+  .battle { position: relative; margin-bottom: 40px; padding-left: 16px; }
+  .battle::before {
+    content: ''; position: absolute;
+    left: -30px; top: 8px;
+    width: 10px; height: 10px;
+    background: var(--lime); border-radius: 50%;
+  }
+  .battle .year {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px; color: var(--garnet); letter-spacing: .2em;
+  }
+  .battle h4 { font-size: 20px; font-weight: 700; margin: 6px 0; }
+  .battle p { font-size: 14px; color: #888; line-height: 1.5; }
+
+  /* ===== FOOTER ===== */
+  footer {
+    padding: 120px 40px 60px;
+    max-width: 1200px; margin: 0 auto;
+    border-top: 1px solid #1a1a1a;
+  }
+  footer h2 {
+    font-size: clamp(40px, 8vw, 96px);
+    font-weight: 900; line-height: .9; margin-bottom: 48px;
+  }
+  footer h2 span { color: var(--lime); }
+  .links {
+    display: flex; flex-wrap: wrap;
+    gap: 16px 40px; margin-bottom: 64px;
+  }
+  .links a {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px; color: var(--paper);
+    text-decoration: none; letter-spacing: .1em;
+    position: relative; transition: color .2s;
+  }
+  .links a:hover { color: var(--lime); }
+  .links a::after {
+    content: attr(data-url);
+    position: absolute; left: 0; top: 100%;
+    font-family: 'Caveat', cursive; font-size: 16px;
+    color: var(--garnet); opacity: 0;
+    transform: translateY(-6px); transition: all .3s;
+    white-space: nowrap;
+  }
+  .links a:hover::after { opacity: 1; transform: translateY(4px); }
+
+  footer .fine {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; color: var(--dim);
+    line-height: 1.8; max-width: 500px;
+  }
+
+  /* ===== Мобильная ===== */
+  @media (max-width: 768px) {
+    section { padding: 80px 20px; }
+    .artifact { grid-template-columns: 1fr; }
+    body { cursor: auto; }
+    .cursor { display: none; }
+    .hero .things { bottom: 16px; right: 16px; }
+    .hero .name-line span { font-size: clamp(24px, 10vw, 60px); }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="grain"></div>
+
+<!-- ===== HERO ===== -->
+<header class="hero">
+  <div class="tattoo" id="tattoo">1915</div>
+  
+  <div class="name-container" id="heroName">
+    <div class="name-line">
+      <span class="col-white" style="--d: 0.0s">M</span>
+      <span class="col-lime"  style="--d: 0.1s">O</span>
+      <span class="col-white" style="--d: 0.2s">Z</span>
+      <span class="col-lime"  style="--d: 0.3s">E</span>
+      <span class="col-white" style="--d: 0.4s">E</span>
+    </div>
+    <div class="name-line">
+      <span class="col-garnet" style="--d: 0.5s">M</span>
+      <span class="col-lime"   style="--d: 0.6s">O</span>
+      <span class="col-garnet" style="--d: 0.7s">N</span>
+      <span class="col-garnet" style="--d: 0.8s">T</span>
+      <span class="col-garnet" style="--d: 0.9s">A</span>
+    </div>
+  </div>
+
+  <p class="tagline">Первопроходец женского рэпа в России <br><span>· Молодая легенда ·</span></p>
+  <a href="#disco" class="btn-listen">Слушать</a>
+  <div class="things" id="thingsCursor">вещи-вещи-вещи</div>
+</header>
+
+<!-- ===== БИО ===== -->
+<section id="bio">
+  <h2 class="section-title"><span class="num">01 / кто это</span>Рваный<br>коллаж</h2>
+
+  <div class="bio-grid">
+    <div class="bio-card">
+      <span class="k">ЕРЕВАН → ВЛАДИВОСТОК</span>
+      <p>Отец слушал Тупака. В 9 лет — первые стихи. В 12 — первый ремикс на Ники Минаж. <b>Армянские корни</b> — не декорация, а фундамент.</p>
+    </div>
+    <div class="bio-card">
+      <span class="k">МОСКВА · 18 ЛЕТ</span>
+      <p>Бросила школу после 9 класса. Приехала с 50 тысячами. Работала закладчицей, потом гострайтингом. <b>Первый миллион — в 18</b>.</p>
+    </div>
+    <div class="bio-card">
+      <span class="k">ОКСИМИРОН</span>
+      <p>Написал в твиттере. Это изменило всё. Баттлы, 140 BPM, <b>«Неплохо для бабы»</b> — фраза, ставшая позицией.</p>
+    </div>
+    <div class="bio-card">
+      <span class="k">1915</span>
+      <p>Тату на ухе. Год, когда начался геноцид армян. <b>Помню.</b> Это не трек — это жизнь.</p>
+    </div>
+    <div class="bio-card" style="grid-column: 1 / -1; transform: none; border-color: var(--garnet);">
+      <span class="k">ТВОРЧЕСКАЯ ДЕТАЛЬ</span>
+      <p>В своих треках Алина <b>не использует слова с буквой «р»</b>, так как картавит. Все слова с этой буквой она заменяет синонимами. Это не баг, это фича.</p>
+      <span class="stamp-mini">БЕЗ «Р»</span>
+    </div>
+  </div>
+</section>
+
+<!-- ===== ДИСКОГРАФИЯ ===== -->
+<section id="disco">
+  <h2 class="section-title"><span class="num">02 / полка</span>Релизы</h2>
+  <div class="disco-scroll" id="discoScroll"></div>
+</section>
+
+<!-- ===== НОВЫЙ БЛОК: АРХИВ (Отсылки) ===== -->
+<section id="archive">
+  <h2 class="section-title"><span class="num">03 / архив</span>Стена<br>памяти</h2>
+  <p style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--dim); margin-bottom: 32px; letter-spacing: .1em;">НАВЕДИ НА АРТЕФАКТ, ЧТОБЫ УСЛЫШАТЬ ГОЛОС</p>
+  
+  <div class="archive-grid">
+    <!-- Артефакт 1: Интервью The Flow -->
+    <div class="archive-item">
+      <span class="icon">📼</span>
+      <h4>Интервью The Flow (2017)</h4>
+      <p style="font-size: 13px; color: #888; margin-top: 8px;">О меме, который сделала публика.</p>
+      <div class="hidden-quote">«Я выхожу из дома, а какие-то школьники с детской площадки бегут и кричат “вещи-вещи-вещи”. Прикольно, что узнают, но надоедает быть героем одного мема».</div>
+      <span class="source">— Mozee Montana, The Flow [citation:10]</span>
+    </div>
+
+    <!-- Артефакт 2: Полицейский -->
+    <div class="archive-item">
+      <span class="icon">👮</span>
+      <h4>Полицейский и мем</h4>
+      <p style="font-size: 13px; color: #888; margin-top: 8px;">Реальная история из жизни.</p>
+      <div class="hidden-quote">«Ко мне подходит полицейский... А он просто попросил постоять с ним и на камеру сказать “вещи-вещи”».</div>
+      <span class="source">— Mozee Montana, The Flow [citation:10]</span>
+    </div>
+
+    <!-- Артефакт 3: Oxxxymiron -->
+    <div class="archive-item">
+      <span class="icon">🐦</span>
+      <h4>Твит Оксимирона</h4>
+      <p style="font-size: 13px; color: #888; margin-top: 8px;">Точка невозврата.</p>
+      <div class="hidden-quote">«Чувак, а ты не думаешь, что проблема в публике, которая отказывается принимать женский рэп?»</div>
+      <span class="source">— Ответ Алины на твит Oxxxymiron [citation:5]</span>
+    </div>
+
+    <!-- Артефакт 4: Армения -->
+    <div class="archive-item">
+      <span class="icon">🍇</span>
+      <h4>Армения взрывает</h4>
+      <p style="font-size: 13px; color: #888; margin-top: 8px;">О названии и образе.</p>
+      <div class="hidden-quote">«Армения взрывает, а мы — гангстеры. Но автомат был настоящий».</div>
+      <span class="source">— О клипе Hayastan Boomin [citation:2]</span>
+    </div>
+  </div>
+</section>
+
+<!-- ===== АРТЕФАКТЫ (Баттлы) ===== -->
+<section id="artifacts">
+  <h2 class="section-title"><span class="num">04 / артефакты</span>Треки-легенды</h2>
+
+  <div class="artifact">
+    <div class="visual">
+      <div class="mirror">
+        <div class="shard">B</div><div class="shard">·</div><div class="shard">M</div>
+        <div class="shard">·</div><div class="shard">·</div><div class="shard">·</div>
+        <div class="shard">·</div><div class="shard">·</div><div class="shard">·</div>
+      </div>
+    </div>
+    <div class="text">
+      <h3>Беллуччи</h3>
+      <div class="quote">«Каждый из тех, кто сегодня тут дал мне огня — себя ощущает Беллуччи»</div>
+      <p>2017. Трек, после которого стало ясно: это не «женский рэп», это рэп.</p>
+      <span class="citation">Трек из EP Hayastan Boomin</span>
+    </div>
+  </div>
+
+  <div class="artifact">
+    <div class="visual">
+      <div class="stamp">НЕПЛОХО<br>ДЛЯ БАБЫ</div>
+    </div>
+    <div class="text">
+      <h3>Неплохо для бабы</h3>
+      <div class="quote">Фраза, которую говорили с издёвкой. Стала названием трека. Стала позицией.</div>
+      <p>2017. Штамп, который с грохотом ставится на экран. И на всю индустрию заодно.</p>
+      <span class="citation">Совместный EP с Машей Hima и Эмелевской</span>
+    </div>
+  </div>
+
+  <!-- Анимация взрыва для 140 BPM -->
+  <div class="artifact" id="battleVisual">
+    <div class="visual">
+      <div class="things-cloud" id="thingsCloud"></div>
+    </div>
+    <div class="text">
+      <h3>Вещи-вещи-вещи</h3>
+      <div class="quote">«Мем, который до сих пор живёт. Как и баттл»</div>
+      <p>140 BPM Cup, 2017. Против Walkie. Кликай — слова лопаются. А если навести на визуал — он «взорвётся» (отсылка к Армении).</p>
+      <span class="citation">140 BPM Cup Main Event vs Walkie [citation:10]</span>
+    </div>
+  </div>
+</section>
+
+<!-- ===== БАТТЛЫ ===== -->
+<section id="battles">
+  <h2 class="section-title"><span class="num">05 / арена</span>Баттлы</h2>
+  <div class="timeline">
+    <div class="battle"><span class="year">2016</span><h4>SLOVO: Дальний Восток</h4><p>Первый выход. Никто не ждал. Все запомнили.</p></div>
+    <div class="battle"><span class="year">2017</span><h4>140 BPM Cup vs Walkie</h4><p>Тот самый мем про вещи.</p></div>
+    <div class="battle"><span class="year">2017</span><h4>Рвать на битах: «Мамин ПодруGun» vs 2 M Sis</h4><p>Победа. Без вопросов.</p></div>
+    <div class="battle"><span class="year">2018</span><h4>Versus BPM vs Galat</h4><p>Ещё один шаг.</p></div>
+  </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer>
+  <h2>Напиши,<br>если ты <span>свой</span></h2>
+  <div class="links">
+    <a href="#" data-url="vk.com/mozeemontana">VK</a>
+    <a href="#" data-url="t.me/mozeemontana">TELEGRAM</a>
+    <a href="#" data-url="youtube.com/@mozeemontana">YOUTUBE</a>
+    <a href="#" data-url="music.apple.com/mozeemontana">APPLE MUSIC</a>
+    <a href="#" data-url="music.yandex.ru/mozeemontana">ЯНДЕКС.МУЗЫКА</a>
+  </div>
+  <p class="fine">
+    Сайт сделан человеком, который переслушал «Беллуччи» больше раз, чем готов признаться. 
+    Фанатский концепт. Но с душой. © 2024
+  </p>
+</footer>
+
+<script>
+  // ===== Курсор 1915 =====
+  const cursor = document.getElementById('cursor');
+  
+  document.addEventListener('mousemove', e => {
+    cursor.style.left = e.clientX + 'px';
+    cursor.style.top = e.clientY + 'px';
+  });
+  
+  const hoverTargets = 'a, .release, .bio-card, .shard, .thing, .stamp, .archive-item';
+  document.querySelectorAll(hoverTargets).forEach(el => {
+    el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+    el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+  });
+
+  // Курсор-закладка для армянских элементов
+  const garnetTargets = '.tattoo, [href="#bio"]';
+  document.querySelectorAll(garnetTargets).forEach(el => {
+    el.addEventListener('mouseenter', () => cursor.classList.add('garnet'));
+    el.addEventListener('mouseleave', () => cursor.classList.remove('garnet'));
+  });
+
+  // ===== Параллакс тату =====
+  const tattoo = document.getElementById('tattoo');
+  window.addEventListener('scroll', () => {
+    tattoo.style.transform = `translate(-50%, calc(-50% + ${window.scrollY * 0.3}px))`;
+  });
+
+  // ===== ДИСКОГРАФИЯ =====
+  const releases = [
+    { title: 'Total Black',        year: '2014', abbr: 'TB', img: 'images/total-black.jpg' },
+    { title: 'XXXVI',              year: '2014', abbr: '36', img: 'images/xxxvi.jpg' },
+    { title: 'LTVM',               year: '2015', abbr: 'LV', img: 'images/ltvm.jpg' },
+    { title: 'Аля Бумае',          year: '2016', abbr: 'АБ', img: 'images/alya-bumae.jpg' },
+    { title: 'Hayastan Boomin',    year: '2017', abbr: 'HB', img: 'images/hayastan-boomin.jpg' },
+    { title: 'Hayastan Boomin 2',  year: '2017', abbr: 'H2', img: 'images/hayastan-boomin-2.jpg' },
+    { title: 'Молодая легенда',    year: '2018', abbr: 'МЛ', img: 'images/molodaya-legenda.jpg' },
+    { title: 'Flashback',          year: '2018', abbr: 'FB', img: 'images/flashback.jpg' },
+    { title: 'Хуже всех',          year: '2019', abbr: 'ХВ', img: 'images/huzhe-vseh.jpg' },
+  ];
+
+  const discoScroll = document.getElementById('discoScroll');
+  releases.forEach(r => {
+    const div = document.createElement('div');
+    div.className = 'release';
+    div.innerHTML = `
+      <div class="cover">
+        <span class="cover-fallback">${r.abbr}</span>
+        <img src="${r.img}" alt="${r.title}" loading="lazy" onerror="this.classList.add('broken')">
+      </div>
+      <div class="meta">
+        <span class="title">${r.title}</span>
+        <span class="year">${r.year}</span>
+      </div>
+    `;
+    div.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+    div.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+    discoScroll.appendChild(div);
+  });
+
+  // ===== Облако ВЕЩИ + Взрыв =====
+  const thingsCloud = document.getElementById('thingsCloud');
+  const battleVisual = document.getElementById('battleVisual').querySelector('.visual');
+  const fonts = ['Unbounded', 'Caveat', 'JetBrains Mono'];
+  const colors = ['#B8FF3C', '#F0EDE6', '#8B1E2D', '#6b6b6b'];
+  const sizes = [14, 18, 22, 26, 32, 40];
+
+  function spawnThing() {
+    const el = document.createElement('span');
+    el.className = 'thing';
+    el.textContent = 'ВЕЩИ';
+    el.style.fontFamily = fonts[Math.floor(Math.random() * fonts.length)];
+    el.style.color = colors[Math.floor(Math.random() * colors.length)];
+    el.style.fontSize = sizes[Math.floor(Math.random() * sizes.length)] + 'px';
+    el.style.transform = `rotate(${Math.random() * 20 - 10}deg)`;
+    el.addEventListener('click', (e) => {
+      e.stopPropagation(); // Чтобы клик по слову не вызывал взрыв визуала
+      el.style.transform = 'scale(0) rotate(180deg)';
+      el.style.opacity = '0';
+      setTimeout(() => { el.remove(); spawnThing(); }, 300);
+    });
+    thingsCloud.appendChild(el);
+  }
+  for (let i = 0; i < 22; i++) spawnThing();
+
+  // Эффект взрыва при наведении на визуал баттла
+  battleVisual.addEventListener('mouseenter', () => {
+    battleVisual.classList.add('explode');
+    setTimeout(() => battleVisual.classList.remove('explode'), 400);
+  });
+
+  // ===== Hero "вещи-вещи" =====
+  const thingsCursor = document.getElementById('thingsCursor');
+  let thingInterval;
+  thingsCursor.addEventListener('mouseenter', () => {
+    thingInterval = setInterval(() => {
+      thingsCursor.textContent = 'вещи-вещи-вещи-вещи-вещи-вещи';
+      setTimeout(() => { thingsCursor.textContent = 'вещи-вещи-вещи'; }, 150);
+    }, 300);
+  });
+  thingsCursor.addEventListener('mouseleave', () => {
+    clearInterval(thingInterval);
+    thingsCursor.textContent = 'вещи-вещи-вещи';
+  });
+
+  // ===== Shake заголовков =====
+  const titles = document.querySelectorAll('.section-title');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.style.animation = 'shake .3s ease';
+        setTimeout(() => { entry.target.style.animation = ''; }, 300);
+      }
+    });
+  }, { threshold: 0.5 });
+  titles.forEach(t => observer.observe(t));
+
+  const style = document.createElement('style');
+  style.textContent = `@keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-3px)} 75%{transform:translateX(3px)} }`;
+  document.head.appendChild(style);
+</script>
+</body>
+</html>
