@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>MOZEE MONTANA — Молодая легенда</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,10 +14,13 @@
     --lime: #B8FF3C;
     --paper: #F0EDE6;
     --dim: #6b6b6b;
+
+    --section-pad-y: 120px;
+    --section-pad-x: 40px;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  html { scroll-behavior: smooth; }
+  html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
 
   body {
     background: var(--bg);
@@ -25,9 +28,10 @@
     font-family: 'Unbounded', sans-serif;
     overflow-x: hidden;
     cursor: none;
+    -webkit-tap-highlight-color: transparent;
   }
 
-  /* ===== КУРСОР: отсылка к татуировке 1915 ===== */
+  /* ===== КУРСОР ===== */
   .cursor {
     position: fixed;
     top: 0; left: 0;
@@ -45,15 +49,16 @@
     transform: translate(-50%, -50%);
   }
   .cursor::before { content: '1915'; }
-  .cursor.hover {
-    color: var(--lime);
-    font-size: 24px;
-    text-shadow: 0 0 12px var(--lime);
-  }
-  /* Курсор-закладка на армянских элементах */
-  .cursor.garnet {
-    color: var(--garnet);
-    text-shadow: 0 0 10px var(--garnet);
+  .cursor.hover { color: var(--lime); font-size: 24px; text-shadow: 0 0 12px var(--lime); }
+  .cursor.garnet { color: var(--garnet); text-shadow: 0 0 10px var(--garnet); }
+
+  @media (hover: none), (pointer: coarse) {
+    body { cursor: auto; }
+    .cursor { display: none !important; }
+    .hero .btn-listen,
+    .release,
+    .thing,
+    .archive-item { cursor: pointer; }
   }
 
   /* ===== Зерно ===== */
@@ -66,6 +71,7 @@
   /* ===== HERO ===== */
   .hero {
     min-height: 100vh;
+    min-height: 100svh;
     display: flex; flex-direction: column;
     justify-content: center; align-items: center;
     position: relative; padding: 40px 20px;
@@ -80,30 +86,27 @@
     letter-spacing: -0.05em; user-select: none; z-index: 0;
     will-change: transform;
   }
-  
+
   .hero .name-container {
     position: relative; z-index: 2;
     display: flex; flex-direction: column;
     align-items: center; justify-content: center;
     width: 100%; max-width: 1100px; margin: 0 auto;
   }
-
   .hero .name-line {
     display: flex; justify-content: center;
     gap: 0 .05em; line-height: .85;
     letter-spacing: -0.04em; width: 100%;
   }
-
   .hero .name-line span {
     display: inline-block; opacity: 0;
     transform: translateY(40px);
     animation: letterIn .8s cubic-bezier(.2,.8,.3,1) forwards;
     animation-delay: var(--d, 0s);
-    font-size: clamp(30px, 9vw, 140px); 
+    font-size: clamp(30px, 9vw, 140px);
   }
-
   @keyframes letterIn { to { opacity: 1; transform: translateY(0); } }
-  
+
   .hero .name-line .col-white { color: var(--paper); }
   .hero .name-line .col-lime { color: var(--lime); }
   .hero .name-line .col-garnet { color: var(--garnet); }
@@ -114,6 +117,7 @@
     font-size: 11px; letter-spacing: .3em;
     text-transform: uppercase; color: var(--dim); text-align: center;
     line-height: 1.8;
+    padding: 0 8px;
   }
   .hero .tagline span { color: var(--paper); }
 
@@ -135,15 +139,20 @@
     font-size: 14px; letter-spacing: .25em; text-transform: uppercase;
     text-decoration: none; border: none; cursor: none;
     transition: transform .2s, box-shadow .2s;
+    touch-action: manipulation;
   }
   .hero .btn-listen:hover {
     transform: translate(-4px, -4px);
     box-shadow: 6px 6px 0 var(--garnet);
   }
+  .hero .btn-listen:active {
+    transform: translate(0, 0);
+    box-shadow: none;
+  }
 
   /* ===== Секции ===== */
   section {
-    padding: 120px 40px;
+    padding: var(--section-pad-y) var(--section-pad-x);
     max-width: 1200px; margin: 0 auto; position: relative;
   }
   .section-title {
@@ -196,6 +205,8 @@
     padding: 20px 0 40px;
     scrollbar-width: thin; scrollbar-color: var(--garnet) transparent;
     scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
   }
   .disco-scroll::-webkit-scrollbar { height: 6px; }
   .disco-scroll::-webkit-scrollbar-thumb { background: var(--garnet); }
@@ -205,7 +216,6 @@
     cursor: none; transition: transform .3s;
   }
   .release:hover { transform: translateY(-8px); }
-
   .release .cover {
     aspect-ratio: 1; background: #141414;
     border: 1px solid #222;
@@ -220,10 +230,7 @@
     z-index: 1; filter: grayscale(.2);
     transition: filter .3s, transform .5s;
   }
-  .release:hover .cover img {
-    filter: grayscale(0);
-    transform: scale(1.05);
-  }
+  .release:hover .cover img { filter: grayscale(0); transform: scale(1.05); }
   .release .cover .cover-fallback {
     font-size: 40px; font-weight: 900; color: var(--dim); z-index: 0;
   }
@@ -232,14 +239,16 @@
   .release .meta {
     margin-top: 14px; display: flex;
     justify-content: space-between; align-items: baseline;
+    gap: 8px;
   }
   .release .meta .title { font-size: 14px; font-weight: 700; }
   .release .meta .year {
     font-family: 'JetBrains Mono', monospace;
     font-size: 12px; color: var(--dim);
+    white-space: nowrap;
   }
 
-  /* ===== НОВЫЙ БЛОК: АРХИВ (Отсылки) ===== */
+  /* ===== АРХИВ ===== */
   .archive-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -263,11 +272,7 @@
     transition: filter .3s;
   }
   .archive-item:hover .icon { filter: grayscale(0); }
-  .archive-item h4 {
-    font-size: 16px;
-    font-weight: 700;
-    margin-bottom: 8px;
-  }
+  .archive-item h4 { font-size: 16px; font-weight: 700; margin-bottom: 8px; }
   .archive-item .hidden-quote {
     font-family: 'Caveat', cursive;
     font-size: 20px;
@@ -279,9 +284,16 @@
     transition: max-height .4s ease, opacity .4s ease, margin .4s;
   }
   .archive-item:hover .hidden-quote {
-    max-height: 120px;
+    max-height: 200px;
     opacity: 1;
     margin-top: 12px;
+  }
+  @media (hover: none) {
+    .archive-item:active .hidden-quote {
+      max-height: 200px;
+      opacity: 1;
+      margin-top: 12px;
+    }
   }
   .archive-item .source {
     display: block;
@@ -292,7 +304,7 @@
     letter-spacing: .1em;
   }
 
-  /* ===== АРТЕФАКТЫ (Баттлы) ===== */
+  /* ===== АРТЕФАКТЫ ===== */
   .artifact {
     display: grid; grid-template-columns: 1fr 1fr;
     gap: 40px; align-items: center;
@@ -318,18 +330,13 @@
     font-size: 24px; color: var(--lime);
     margin-bottom: 20px; line-height: 1.3;
   }
-  .artifact .text p {
-    font-size: 15px; line-height: 1.7; color: #b8b8b8;
-  }
+  .artifact .text p { font-size: 15px; line-height: 1.7; color: #b8b8b8; }
   .artifact .text .citation {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 10px;
-    color: var(--dim);
-    margin-top: 12px;
-    display: block;
+    font-size: 10px; color: var(--dim);
+    margin-top: 12px; display: block;
   }
 
-  /* Мирроу (Беллуччи) */
   .mirror {
     display: grid; grid-template-columns: repeat(3, 1fr);
     gap: 6px; width: 80%; height: 80%;
@@ -342,7 +349,6 @@
   }
   .shard:hover { background: var(--garnet); color: var(--paper); transform: scale(1.05); }
 
-  /* ВЕЩИ + Анимация взрыва */
   .things-cloud {
     display: flex; flex-wrap: wrap; gap: 12px;
     justify-content: center; width: 90%; height: 90%;
@@ -356,16 +362,13 @@
   }
   .thing:hover { transform: scale(1.3) rotate(-3deg); color: var(--lime); }
   .thing:active { transform: scale(0); opacity: 0; }
-  
-  /* Анимация для "Взрыва" */
+
   @keyframes explode {
     0% { transform: scale(1); }
     50% { transform: scale(1.1); filter: brightness(2); }
     100% { transform: scale(1); filter: brightness(1); }
   }
-  .visual.explode {
-    animation: explode 0.4s ease-out;
-  }
+  .visual.explode { animation: explode 0.4s ease-out; }
 
   /* ===== ТАЙМЛАЙН ===== */
   .timeline { position: relative; padding-left: 32px; }
@@ -385,7 +388,7 @@
     font-family: 'JetBrains Mono', monospace;
     font-size: 12px; color: var(--garnet); letter-spacing: .2em;
   }
-  .battle h4 { font-size: 20px; font-weight: 700; margin: 6px 0; }
+  .battle h4 { font-size: 20px; font-weight: 700; margin: 6px 0; line-height: 1.25; }
   .battle p { font-size: 14px; color: #888; line-height: 1.5; }
 
   /* ===== FOOTER ===== */
@@ -397,6 +400,7 @@
   footer h2 {
     font-size: clamp(40px, 8vw, 96px);
     font-weight: 900; line-height: .9; margin-bottom: 48px;
+    word-break: break-word;
   }
   footer h2 span { color: var(--lime); }
   .links {
@@ -417,23 +421,170 @@
     color: var(--garnet); opacity: 0;
     transform: translateY(-6px); transition: all .3s;
     white-space: nowrap;
+    pointer-events: none;
   }
   .links a:hover::after { opacity: 1; transform: translateY(4px); }
-
   footer .fine {
     font-family: 'JetBrains Mono', monospace;
     font-size: 11px; color: var(--dim);
     line-height: 1.8; max-width: 500px;
   }
 
-  /* ===== Мобильная ===== */
+  /* ===================== АДАПТИВ ===================== */
+
+  @media (min-width: 1440px) {
+    section { max-width: 1320px; }
+    footer { max-width: 1320px; }
+    .hero .name-line span { font-size: clamp(60px, 8vw, 160px); }
+    .release { flex: 0 0 300px; }
+  }
+
+  @media (max-width: 1280px) {
+    section { padding: 100px 32px; }
+    .section-title { margin-bottom: 48px; }
+    .artifact { gap: 32px; margin-bottom: 64px; padding-bottom: 64px; }
+  }
+
+  @media (max-width: 1024px) {
+    :root {
+      --section-pad-y: 80px;
+      --section-pad-x: 28px;
+    }
+    .hero .name-line span { font-size: clamp(40px, 9vw, 110px); }
+    .artifact { grid-template-columns: 1fr; gap: 24px; }
+    .artifact:nth-child(even) { direction: ltr; }
+    .artifact .visual { max-width: 520px; width: 100%; margin: 0 auto; }
+    .disco-scroll { gap: 16px; }
+    .release { flex: 0 0 220px; }
+    footer { padding: 80px 28px 40px; }
+  }
+
   @media (max-width: 768px) {
-    section { padding: 80px 20px; }
-    .artifact { grid-template-columns: 1fr; }
+    :root {
+      --section-pad-y: 64px;
+      --section-pad-x: 20px;
+    }
+
     body { cursor: auto; }
     .cursor { display: none; }
-    .hero .things { bottom: 16px; right: 16px; }
-    .hero .name-line span { font-size: clamp(24px, 10vw, 60px); }
+
+    .hero { padding: 48px 16px 72px; min-height: 100svh; }
+    .hero .tattoo { font-size: 70vw; -webkit-text-stroke-width: 1px; }
+    .hero .name-line span { font-size: clamp(24px, 12vw, 64px); }
+    .hero .name-line { line-height: .9; }
+    .hero .tagline {
+      font-size: 10px;
+      letter-spacing: .2em;
+      margin-top: 24px;
+      max-width: 90%;
+    }
+    .hero .btn-listen {
+      margin-top: 36px;
+      padding: 16px 36px;
+      font-size: 12px;
+      letter-spacing: .2em;
+      min-width: 200px;
+      text-align: center;
+    }
+    .hero .things {
+      position: static;
+      margin-top: 40px;
+      bottom: auto; right: auto;
+      font-size: 10px;
+    }
+
+    section { padding: var(--section-pad-y) var(--section-pad-x); }
+    .section-title {
+      font-size: clamp(28px, 9vw, 56px);
+      margin-bottom: 36px;
+      line-height: .95;
+    }
+    .section-title .num { font-size: 11px; }
+
+    .bio-grid { grid-template-columns: 1fr; gap: 16px; }
+    .bio-card {
+      transform: none !important;
+      padding: 24px 20px;
+    }
+    .bio-card:hover { transform: none !important; }
+    .bio-card p { font-size: 14px; }
+
+    .disco-scroll {
+      gap: 14px;
+      padding: 12px 0 28px;
+      margin: 0 calc(var(--section-pad-x) * -1);
+      padding-left: var(--section-pad-x);
+      padding-right: var(--section-pad-x);
+    }
+    .release { flex: 0 0 200px; }
+    .release:hover { transform: none; }
+    .release .meta .title { font-size: 13px; }
+
+    .archive-grid { grid-template-columns: 1fr; gap: 14px; }
+    .archive-item { padding: 24px 20px; }
+    .archive-item .hidden-quote {
+      max-height: 200px;
+      opacity: 1;
+      margin-top: 10px;
+    }
+    .archive-item .icon { font-size: 26px; margin-bottom: 12px; }
+
+    .artifact {
+      grid-template-columns: 1fr;
+      gap: 20px;
+      margin-bottom: 48px;
+      padding-bottom: 48px;
+    }
+    .artifact .visual { aspect-ratio: 16/10; max-width: 100%; }
+    .artifact .text h3 { font-size: clamp(22px, 7vw, 32px); margin-bottom: 14px; }
+    .artifact .text .quote { font-size: 20px; margin-bottom: 14px; }
+    .artifact .text p { font-size: 14px; line-height: 1.6; }
+
+    .mirror { width: 70%; height: 70%; gap: 4px; }
+    .shard { font-size: 20px; }
+
+    .things-cloud { width: 95%; height: 95%; gap: 8px; }
+
+    .timeline { padding-left: 24px; }
+    .timeline::before { left: 6px; }
+    .battle { padding-left: 10px; margin-bottom: 32px; }
+    .battle::before { left: -24px; width: 8px; height: 8px; }
+    .battle h4 { font-size: 17px; }
+    .battle p { font-size: 13px; }
+
+    footer { padding: 64px 20px 40px; }
+    footer h2 { font-size: clamp(32px, 11vw, 56px); margin-bottom: 32px; }
+    .links { gap: 14px 24px; margin-bottom: 40px; }
+    .links a { font-size: 12px; }
+    footer .fine { font-size: 10px; }
+  }
+
+  @media (max-width: 380px) {
+    :root { --section-pad-x: 16px; }
+    .hero .name-line span { font-size: clamp(22px, 13vw, 48px); }
+    .release { flex: 0 0 170px; }
+    .section-title { font-size: clamp(26px, 10vw, 44px); }
+    .links { flex-direction: column; gap: 12px; }
+  }
+
+  @media (hover: none) {
+    .bio-card:hover,
+    .release:hover,
+    .archive-item:hover,
+    .shard:hover,
+    .thing:hover,
+    .hero .btn-listen:hover,
+    .links a:hover { transform: none; box-shadow: none; }
+    .links a:hover::after { opacity: 0; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: .001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: .001ms !important;
+      scroll-behavior: auto !important;
+    }
   }
 </style>
 </head>
@@ -445,7 +596,7 @@
 <!-- ===== HERO ===== -->
 <header class="hero">
   <div class="tattoo" id="tattoo">1915</div>
-  
+
   <div class="name-container" id="heroName">
     <div class="name-line">
       <span class="col-white" style="--d: 0.0s">M</span>
@@ -503,13 +654,12 @@
   <div class="disco-scroll" id="discoScroll"></div>
 </section>
 
-<!-- ===== НОВЫЙ БЛОК: АРХИВ (Отсылки) ===== -->
+<!-- ===== АРХИВ ===== -->
 <section id="archive">
   <h2 class="section-title"><span class="num">03 / архив</span>Стена<br>памяти</h2>
   <p style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--dim); margin-bottom: 32px; letter-spacing: .1em;">НАВЕДИ НА АРТЕФАКТ, ЧТОБЫ УСЛЫШАТЬ ГОЛОС</p>
-  
+
   <div class="archive-grid">
-    <!-- Артефакт 1: Интервью The Flow -->
     <div class="archive-item">
       <span class="icon">📼</span>
       <h4>Интервью The Flow (2017)</h4>
@@ -518,7 +668,6 @@
       <span class="source">— Mozee Montana, The Flow [citation:10]</span>
     </div>
 
-    <!-- Артефакт 2: Полицейский -->
     <div class="archive-item">
       <span class="icon">👮</span>
       <h4>Полицейский и мем</h4>
@@ -527,7 +676,6 @@
       <span class="source">— Mozee Montana, The Flow [citation:10]</span>
     </div>
 
-    <!-- Артефакт 3: Oxxxymiron -->
     <div class="archive-item">
       <span class="icon">🐦</span>
       <h4>Твит Оксимирона</h4>
@@ -536,7 +684,6 @@
       <span class="source">— Ответ Алины на твит Oxxxymiron [citation:5]</span>
     </div>
 
-    <!-- Артефакт 4: Армения -->
     <div class="archive-item">
       <span class="icon">🍇</span>
       <h4>Армения взрывает</h4>
@@ -547,7 +694,7 @@
   </div>
 </section>
 
-<!-- ===== АРТЕФАКТЫ (Баттлы) ===== -->
+<!-- ===== АРТЕФАКТЫ ===== -->
 <section id="artifacts">
   <h2 class="section-title"><span class="num">04 / артефакты</span>Треки-легенды</h2>
 
@@ -579,7 +726,6 @@
     </div>
   </div>
 
-  <!-- Анимация взрыва для 140 BPM -->
   <div class="artifact" id="battleVisual">
     <div class="visual">
       <div class="things-cloud" id="thingsCloud"></div>
@@ -615,38 +761,41 @@
     <a href="#" data-url="music.yandex.ru/mozeemontana">ЯНДЕКС.МУЗЫКА</a>
   </div>
   <p class="fine">
-    Сайт сделан человеком, который переслушал «Беллуччи» больше раз, чем готов признаться. 
+    Сайт сделан человеком, который переслушал «Беллуччи» больше раз, чем готов признаться.
     Фанатский концепт. Но с душой. © 2024
   </p>
 </footer>
 
 <script>
+  const isTouch = window.matchMedia('(hover: none), (pointer: coarse)').matches;
+
   // ===== Курсор 1915 =====
   const cursor = document.getElementById('cursor');
-  
-  document.addEventListener('mousemove', e => {
-    cursor.style.left = e.clientX + 'px';
-    cursor.style.top = e.clientY + 'px';
-  });
-  
-  const hoverTargets = 'a, .release, .bio-card, .shard, .thing, .stamp, .archive-item';
-  document.querySelectorAll(hoverTargets).forEach(el => {
-    el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
-    el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
-  });
 
-  // Курсор-закладка для армянских элементов
-  const garnetTargets = '.tattoo, [href="#bio"]';
-  document.querySelectorAll(garnetTargets).forEach(el => {
-    el.addEventListener('mouseenter', () => cursor.classList.add('garnet'));
-    el.addEventListener('mouseleave', () => cursor.classList.remove('garnet'));
-  });
+  if (!isTouch) {
+    document.addEventListener('mousemove', e => {
+      cursor.style.left = e.clientX + 'px';
+      cursor.style.top = e.clientY + 'px';
+    });
 
-  // ===== Параллакс тату =====
-  const tattoo = document.getElementById('tattoo');
-  window.addEventListener('scroll', () => {
-    tattoo.style.transform = `translate(-50%, calc(-50% + ${window.scrollY * 0.3}px))`;
-  });
+    const hoverTargets = 'a, .release, .bio-card, .shard, .thing, .stamp, .archive-item';
+    document.querySelectorAll(hoverTargets).forEach(el => {
+      el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+      el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+    });
+
+    const garnetTargets = '.tattoo, [href="#bio"]';
+    document.querySelectorAll(garnetTargets).forEach(el => {
+      el.addEventListener('mouseenter', () => cursor.classList.add('garnet'));
+      el.addEventListener('mouseleave', () => cursor.classList.remove('garnet'));
+    });
+
+    // Параллакс тату
+    const tattoo = document.getElementById('tattoo');
+    window.addEventListener('scroll', () => {
+      tattoo.style.transform = `translate(-50%, calc(-50% + ${window.scrollY * 0.3}px))`;
+    }, { passive: true });
+  }
 
   // ===== ДИСКОГРАФИЯ =====
   const releases = [
@@ -675,8 +824,10 @@
         <span class="year">${r.year}</span>
       </div>
     `;
-    div.addEventListener('mouseenter', () => cursor.classList.add('hover'));
-    div.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+    if (!isTouch) {
+      div.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+      div.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+    }
     discoScroll.appendChild(div);
   });
 
@@ -696,7 +847,7 @@
     el.style.fontSize = sizes[Math.floor(Math.random() * sizes.length)] + 'px';
     el.style.transform = `rotate(${Math.random() * 20 - 10}deg)`;
     el.addEventListener('click', (e) => {
-      e.stopPropagation(); // Чтобы клик по слову не вызывал взрыв визуала
+      e.stopPropagation();
       el.style.transform = 'scale(0) rotate(180deg)';
       el.style.opacity = '0';
       setTimeout(() => { el.remove(); spawnThing(); }, 300);
@@ -705,10 +856,12 @@
   }
   for (let i = 0; i < 22; i++) spawnThing();
 
-  // Эффект взрыва при наведении на визуал баттла
-  battleVisual.addEventListener('mouseenter', () => {
-    battleVisual.classList.add('explode');
-    setTimeout(() => battleVisual.classList.remove('explode'), 400);
+  // Эффект взрыва при наведении / тапе
+  ['pointerenter', 'touchstart'].forEach(evt => {
+    battleVisual.addEventListener(evt, () => {
+      battleVisual.classList.add('explode');
+      setTimeout(() => battleVisual.classList.remove('explode'), 400);
+    }, { passive: true });
   });
 
   // ===== Hero "вещи-вещи" =====
